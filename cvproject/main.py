@@ -39,7 +39,6 @@ import seaborn as sns
 import pandas as pd
 import os
 
-# 📌 حطي هنا الباث عندك
 data_path = r"dataset"
 # أو لو برا المشروع:
 # data_path = r"C:\Users\YourName\Desktop\dataset"
@@ -124,7 +123,6 @@ def preprocess_image(image_path):
 
 sample_size = min(300, len(df_filtered))
 sample_df = df_filtered.sample(min(300, len(df_filtered)), random_state=42)
-print("Dataset size:", len(df_filtered))
 
 results = []
 
@@ -653,30 +651,6 @@ def extract_lbp_features(img):
     features['lbp_entropy'] = -np.sum(hist * np.log2(hist + 1e-10))
 
     return features, lbp, mask
-
-def extract_shape_features(img):
-    mask        = get_segmentation_mask(img)
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    if not contours:
-        return {'area': 0, 'perimeter': 0, 'circularity': 0,
-                'solidity': 0, 'aspect_ratio': 0}
-
-    c         = max(contours, key=cv2.contourArea)
-    area      = cv2.contourArea(c)
-    perimeter = cv2.arcLength(c, True)
-    hull_area = cv2.contourArea(cv2.convexHull(c))
-    _, _, w, h = cv2.boundingRect(c)
-
-    return {
-        'area':         area,
-        'perimeter':    perimeter,
-        'circularity':  (4 * np.pi * area / perimeter ** 2) if perimeter > 0 else 0,
-        'solidity':     area / hull_area if hull_area > 0 else 0,
-        'aspect_ratio': w / h if h > 0 else 0
-    }
-
-"""## Shape features"""
 
 def extract_shape_features(img):
     mask        = get_segmentation_mask(img)
